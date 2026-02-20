@@ -4,74 +4,131 @@
   <title>GemHunter AI</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0d0d0d;
-      color: white;
-      text-align: center;
-      padding: 60px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f1115;
+      color: #ffffff;
     }
 
-    h1 {
-      font-size: 48px;
-      margin-bottom: 20px;
+    header {
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    p {
+    .logo {
+      font-weight: bold;
       font-size: 20px;
-      max-width: 700px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 120px 20px;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      max-width: 900px;
       margin: auto;
-      line-height: 1.6;
-      color: #ccc;
+      line-height: 1.2;
     }
 
-    button {
-      margin-top: 30px;
+    .hero p {
+      font-size: 20px;
+      color: #b0b3b8;
+      max-width: 700px;
+      margin: 30px auto;
+    }
+
+    .btn {
       padding: 15px 30px;
-      font-size: 18px;
       background: #ffffff;
-      color: black;
+      color: #000;
       border: none;
-      cursor: pointer;
       border-radius: 6px;
-    }
-
-    button:hover {
-      background: #ddd;
+      font-size: 16px;
+      cursor: pointer;
     }
 
     .section {
-      margin-top: 80px;
+      padding: 80px 20px;
+      text-align: center;
     }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .card {
+      background: #1a1d24;
+      padding: 30px;
+      border-radius: 10px;
+      width: 280px;
+    }
+
+    footer {
+      padding: 40px;
+      text-align: center;
+      color: #777;
+      font-size: 14px;
+    }
+
+    @media(max-width: 768px){
+      .hero h1 {
+        font-size: 32px;
+      }
+    }
+
   </style>
 </head>
+
 <body>
 
-  <h1>GemHunter AI</h1>
+<header>
+  <div class="logo">GemHunter AI</div>
+</header>
+
+<section class="hero">
+  <h1>AI-Driven Probabilistic Intelligence for Emerging Crypto Assets</h1>
   <p>
-    AI-driven probabilistic intelligence for emerging crypto assets.
-    Identify opportunities before the market moves.
+    Identify high-probability opportunities before the market reacts.
+    Structured. Data-driven. Institutional mindset.
   </p>
+  <button class="btn">Join Beta</button>
+</section>
 
-  <button>Join Beta</button>
+<section class="section">
+  <h2>How It Works</h2>
 
-  <div class="section">
-    <h2>How It Works</h2>
-    <p>
-      Our AI analyzes momentum, liquidity, growth signals and risk patterns
-      to generate probabilistic scores for emerging tokens.
-    </p>
+  <div class="cards">
+    <div class="card">
+      <h3>Momentum Analysis</h3>
+      <p>Detects unusual growth signals across emerging tokens.</p>
+    </div>
+
+    <div class="card">
+      <h3>Growth Modeling</h3>
+      <p>Measures liquidity, expansion rate and structural strength.</p>
+    </div>
+
+    <div class="card">
+      <h3>Risk Probability</h3>
+      <p>Estimates probability of correction or breakout events.</p>
+    </div>
   </div>
+</section>
 
-  <div class="section">
-    <h2>Why Different?</h2>
-    <p>
-      We focus on probability modeling instead of hype.
-      Data-driven. Structured. Institutional approach.
-    </p>
-  </div>
+<footer>
+  © 2026 GemHunter AI — Probabilistic Crypto Intelligence
+</footer>
 
 </body>
 </html>
