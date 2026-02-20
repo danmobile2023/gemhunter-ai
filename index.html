@@ -1,134 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <title>GemHunter AI</title>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <title>Calculadora de Cozinha Reta</title>
   <style>
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #0f1115;
-      color: #ffffff;
-    }
-
-    header {
-      padding: 20px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-weight: bold;
-      font-size: 20px;
-    }
-
-    .hero {
-      text-align: center;
-      padding: 120px 20px;
-    }
-
-    .hero h1 {
-      font-size: 48px;
-      max-width: 900px;
-      margin: auto;
-      line-height: 1.2;
-    }
-
-    .hero p {
-      font-size: 20px;
-      color: #b0b3b8;
-      max-width: 700px;
-      margin: 30px auto;
-    }
-
-    .btn {
-      padding: 15px 30px;
-      background: #ffffff;
-      color: #000;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .section {
-      padding: 80px 20px;
-      text-align: center;
-    }
-
-    .cards {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 30px;
-      margin-top: 40px;
-    }
-
-    .card {
-      background: #1a1d24;
-      padding: 30px;
-      border-radius: 10px;
-      width: 280px;
-    }
-
-    footer {
-      padding: 40px;
-      text-align: center;
-      color: #777;
-      font-size: 14px;
-    }
-
-    @media(max-width: 768px){
-      .hero h1 {
-        font-size: 32px;
-      }
-    }
-
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+    input, button { margin: 5px 0; padding: 5px; width: 100%; }
+    .resultado { margin-top: 20px; padding: 10px; border: 1px solid #333; }
   </style>
 </head>
-
 <body>
+  <h1>Calculadora de Cozinha Reta</h1>
 
-<header>
-  <div class="logo">GemHunter AI</div>
-</header>
+  <label>Largura total da parede (mm):</label>
+  <input type="number" id="largura" value="3000">
 
-<section class="hero">
-  <h1>AI-Driven Probabilistic Intelligence for Emerging Crypto Assets</h1>
-  <p>
-    Identify high-probability opportunities before the market reacts.
-    Structured. Data-driven. Institutional mindset.
-  </p>
-  <button class="btn">Join Beta</button>
-</section>
+  <label>Valor MDF 15mm (R$/chapa):</label>
+  <input type="number" id="valorMDF15" value="350">
 
-<section class="section">
-  <h2>How It Works</h2>
+  <label>Valor MDF 6mm (R$/chapa):</label>
+  <input type="number" id="valorMDF6" value="150">
 
-  <div class="cards">
-    <div class="card">
-      <h3>Momentum Analysis</h3>
-      <p>Detects unusual growth signals across emerging tokens.</p>
-    </div>
+  <label>Valor ferragens (R$):</label>
+  <input type="number" id="ferragens" value="600">
 
-    <div class="card">
-      <h3>Growth Modeling</h3>
-      <p>Measures liquidity, expansion rate and structural strength.</p>
-    </div>
+  <label>Margem %:</label>
+  <input type="number" id="margem" value="100">
 
-    <div class="card">
-      <h3>Risk Probability</h3>
-      <p>Estimates probability of correction or breakout events.</p>
-    </div>
-  </div>
-</section>
+  <button onclick="calcular()">Calcular Orçamento</button>
 
-<footer>
-  © 2026 GemHunter AI — Probabilistic Crypto Intelligence
-</footer>
+  <div class="resultado" id="resultado"></div>
 
+  <script>
+    function calcular() {
+      // Dados fixos
+      const moduloPadrao = 600; // mm
+      const altura = 700; // mm
+      const profundidade = 560; // mm
+      const fundoAltura = 6; // mm
+      const chapaArea = 2.75 * 1.85; // m²
+
+      // Entradas
+      const larguraTotal = parseFloat(document.getElementById('largura').value);
+      const valorMDF15 = parseFloat(document.getElementById('valorMDF15').value);
+      const valorMDF6 = parseFloat(document.getElementById('valorMDF6').value);
+      const ferragens = parseFloat(document.getElementById('ferragens').value);
+      const margem = parseFloat(document.getElementById('margem').value);
+
+      // Número de módulos
+      let numModulos = Math.floor(larguraTotal / moduloPadrao);
+      let sobra = larguraTotal % moduloPadrao;
+      let ultimoModulo = moduloPadrao + sobra;
+      if(sobra === 0) ultimoModulo = moduloPadrao;
+
+      // Cálculo MDF 15mm por módulo
+      function areaModulo(largura) {
+        const laterais = 2 * (altura/1000 * profundidade/1000);
+        const base = ((largura-30)/1000 * profundidade/1000);
+        const travessa = ((largura-30)/1000 * 0.10); // topo
+        return laterais + base + travessa;
+      }
+
+      let totalMDF15 = areaModulo(moduloPadrao) * (numModulos -1) + areaModulo(ultimoModulo);
+
+      // Fundo 6mm
+      function areaFundo(largura) {
+        return (largura/1000 * altura/1000);
+      }
+      let totalFundo6 = areaFundo(moduloPadrao) * (numModulos -1) + areaFundo(ultimoModulo);
+
+      // Chapas necessárias
+      const chapas15 = Math.ceil(totalMDF15 / chapaArea);
+      const chapas6 = Math.ceil(totalFundo6 / chapaArea);
+
+      // Custo
+      const custoMDF15 = chapas15 * valorMDF15;
+      const custoMDF6 = chapas6 * valorMDF6;
+      const custoTotal = custoMDF15 + custoMDF6 + ferragens;
+      const precoFinal = custoTotal * (1 + margem/100);
+
+      // Resultado
+      const resultadoDiv = document.getElementById('resultado');
+      resultadoDiv.innerHTML = `
+        <h2>Resumo do Orçamento</h2>
+        <p>Número de módulos: ${numModulos}</p>
+        <p>Último módulo ajustado: ${ultimoModulo} mm</p>
+        <p>Total MDF 15mm: ${totalMDF15.toFixed(2)} m² (${chapas15} chapas)</p>
+        <p>Total Fundo 6mm: ${totalFundo6.toFixed(2)} m² (${chapas6} chapas)</p>
+        <p>Custo material: R$ ${(custoMDF15 + custoMDF6).toFixed(2)}</p>
+        <p>Ferragens: R$ ${ferragens.toFixed(2)}</p>
+        <p><strong>Preço final sugerido: R$ ${precoFinal.toFixed(2)}</strong></p>
+      `;
+    }
+  </script>
 </body>
 </html>
