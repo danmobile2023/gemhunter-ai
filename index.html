@@ -1,97 +1,108 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Calculadora de Cozinha Reta</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
-    input, button { margin: 5px 0; padding: 5px; width: 100%; }
-    .resultado { margin-top: 20px; padding: 10px; border: 1px solid #333; }
-  </style>
+<meta charset="UTF-8">
+<title>Promob Lite - Cozinha Reta</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Roboto', sans-serif; background:#f4f4f9; margin:0; padding:0; }
+  header { background:#222; color:white; padding:20px; text-align:center; }
+  h1 { margin:0; font-weight:700; }
+  .container { display:flex; margin:20px; gap:20px; }
+  .left-panel, .right-panel { background:white; padding:20px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
+  .left-panel { flex:2; }
+  .right-panel { flex:1; min-width:250px; }
+  label { display:block; margin:10px 0 5px; }
+  input, select { width:100%; padding:8px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc; }
+  button { padding:10px; width:100%; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer; margin-top:10px; }
+  button:hover { background:#0056b3; }
+  #plantas { width:100%; height:400px; background:#eaeaea; border:2px dashed #ccc; display:flex; flex-wrap:wrap; padding:10px; gap:5px; position:relative; }
+  .modulo { width:60px; height:70px; background:#007bff; color:white; display:flex; align-items:center; justify-content:center; font-weight:700; cursor:pointer; border-radius:5px; }
+  .resultado { margin-top:20px; background:#f8f8f8; padding:15px; border-radius:8px; }
+</style>
 </head>
 <body>
-  <h1>Calculadora de Cozinha Reta</h1>
+<header>
+  <h1>Promob Lite - Cozinha Reta</h1>
+</header>
+<div class="container">
+  <div class="left-panel">
+    <h2>Planta da Cozinha</h2>
+    <div id="plantas"></div>
+    <button onclick="adicionarModulo()">Adicionar Módulo</button>
+  </div>
+  <div class="right-panel">
+    <h2>Configurações</h2>
+    <label>Valor MDF 15mm (R$/chapa)</label>
+    <input type="number" id="valorMDF15" value="350">
+    
+    <label>Valor MDF 6mm (R$/chapa)</label>
+    <input type="number" id="valorMDF6" value="150">
 
-  <label>Largura total da parede (mm):</label>
-  <input type="number" id="largura" value="3000">
+    <label>Valor Ferragens (R$)</label>
+    <input type="number" id="ferragens" value="600">
 
-  <label>Valor MDF 15mm (R$/chapa):</label>
-  <input type="number" id="valorMDF15" value="350">
+    <label>Margem %</label>
+    <input type="number" id="margem" value="100">
 
-  <label>Valor MDF 6mm (R$/chapa):</label>
-  <input type="number" id="valorMDF6" value="150">
+    <button onclick="calcularOrcamento()">Gerar Orçamento</button>
+    <div class="resultado" id="resultado"></div>
+  </div>
+</div>
 
-  <label>Valor ferragens (R$):</label>
-  <input type="number" id="ferragens" value="600">
+<script>
+let modulos = [];
 
-  <label>Margem %:</label>
-  <input type="number" id="margem" value="100">
+function adicionarModulo() {
+  const planta = document.getElementById('plantas');
+  const moduloNum = modulos.length + 1;
+  const div = document.createElement('div');
+  div.className = 'modulo';
+  div.innerText = moduloNum;
+  div.onclick = () => { alert('Módulo selecionado!'); }
+  planta.appendChild(div);
+  modulos.push({ largura: 600, altura: 700, profundidade: 560 }); // padrão
+}
 
-  <button onclick="calcular()">Calcular Orçamento</button>
+function calcularOrcamento() {
+  if(modulos.length === 0) { alert('Adicione pelo menos um módulo!'); return; }
 
-  <div class="resultado" id="resultado"></div>
+  const valorMDF15 = parseFloat(document.getElementById('valorMDF15').value);
+  const valorMDF6 = parseFloat(document.getElementById('valorMDF6').value);
+  const ferragens = parseFloat(document.getElementById('ferragens').value);
+  const margem = parseFloat(document.getElementById('margem').value);
+  const chapaArea = 2.75*1.85;
 
-  <script>
-    function calcular() {
-      // Dados fixos
-      const moduloPadrao = 600; // mm
-      const altura = 700; // mm
-      const profundidade = 560; // mm
-      const fundoAltura = 6; // mm
-      const chapaArea = 2.75 * 1.85; // m²
+  let totalMDF15 = 0;
+  let totalFundo6 = 0;
 
-      // Entradas
-      const larguraTotal = parseFloat(document.getElementById('largura').value);
-      const valorMDF15 = parseFloat(document.getElementById('valorMDF15').value);
-      const valorMDF6 = parseFloat(document.getElementById('valorMDF6').value);
-      const ferragens = parseFloat(document.getElementById('ferragens').value);
-      const margem = parseFloat(document.getElementById('margem').value);
+  modulos.forEach(m => {
+    const laterais = 2 * (m.altura/1000 * m.profundidade/1000);
+    const base = ((m.largura-30)/1000 * m.profundidade/1000);
+    const travessa = ((m.largura-30)/1000 * 0.10);
+    totalMDF15 += laterais + base + travessa;
 
-      // Número de módulos
-      let numModulos = Math.floor(larguraTotal / moduloPadrao);
-      let sobra = larguraTotal % moduloPadrao;
-      let ultimoModulo = moduloPadrao + sobra;
-      if(sobra === 0) ultimoModulo = moduloPadrao;
+    totalFundo6 += (m.largura/1000 * m.altura/1000);
+  });
 
-      // Cálculo MDF 15mm por módulo
-      function areaModulo(largura) {
-        const laterais = 2 * (altura/1000 * profundidade/1000);
-        const base = ((largura-30)/1000 * profundidade/1000);
-        const travessa = ((largura-30)/1000 * 0.10); // topo
-        return laterais + base + travessa;
-      }
+  const chapas15 = Math.ceil(totalMDF15 / chapaArea);
+  const chapas6 = Math.ceil(totalFundo6 / chapaArea);
 
-      let totalMDF15 = areaModulo(moduloPadrao) * (numModulos -1) + areaModulo(ultimoModulo);
+  const custoMDF15 = chapas15 * valorMDF15;
+  const custoMDF6 = chapas6 * valorMDF6;
+  const custoTotal = custoMDF15 + custoMDF6 + ferragens;
+  const precoFinal = custoTotal * (1 + margem/100);
 
-      // Fundo 6mm
-      function areaFundo(largura) {
-        return (largura/1000 * altura/1000);
-      }
-      let totalFundo6 = areaFundo(moduloPadrao) * (numModulos -1) + areaFundo(ultimoModulo);
-
-      // Chapas necessárias
-      const chapas15 = Math.ceil(totalMDF15 / chapaArea);
-      const chapas6 = Math.ceil(totalFundo6 / chapaArea);
-
-      // Custo
-      const custoMDF15 = chapas15 * valorMDF15;
-      const custoMDF6 = chapas6 * valorMDF6;
-      const custoTotal = custoMDF15 + custoMDF6 + ferragens;
-      const precoFinal = custoTotal * (1 + margem/100);
-
-      // Resultado
-      const resultadoDiv = document.getElementById('resultado');
-      resultadoDiv.innerHTML = `
-        <h2>Resumo do Orçamento</h2>
-        <p>Número de módulos: ${numModulos}</p>
-        <p>Último módulo ajustado: ${ultimoModulo} mm</p>
-        <p>Total MDF 15mm: ${totalMDF15.toFixed(2)} m² (${chapas15} chapas)</p>
-        <p>Total Fundo 6mm: ${totalFundo6.toFixed(2)} m² (${chapas6} chapas)</p>
-        <p>Custo material: R$ ${(custoMDF15 + custoMDF6).toFixed(2)}</p>
-        <p>Ferragens: R$ ${ferragens.toFixed(2)}</p>
-        <p><strong>Preço final sugerido: R$ ${precoFinal.toFixed(2)}</strong></p>
-      `;
-    }
-  </script>
+  document.getElementById('resultado').innerHTML = `
+    <h3>Resumo do Orçamento</h3>
+    <p>Número de módulos: ${modulos.length}</p>
+    <p>Total MDF 15mm: ${totalMDF15.toFixed(2)} m² (${chapas15} chapas)</p>
+    <p>Total Fundo 6mm: ${totalFundo6.toFixed(2)} m² (${chapas6} chapas)</p>
+    <p>Custo material: R$ ${(custoMDF15+custoMDF6).toFixed(2)}</p>
+    <p>Ferragens: R$ ${ferragens.toFixed(2)}</p>
+    <p><strong>Preço final sugerido: R$ ${precoFinal.toFixed(2)}</strong></p>
+  `;
+}
+</script>
 </body>
 </html>
