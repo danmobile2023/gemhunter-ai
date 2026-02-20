@@ -2,42 +2,51 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Promob Lite - Cozinha Reta</title>
+<title>Promob Lite - Orçamento de Cozinha</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  body { font-family: 'Roboto', sans-serif; background:#f4f4f9; margin:0; padding:0; }
-  header { background:#222; color:white; padding:20px; text-align:center; }
-  h1 { margin:0; font-weight:700; }
-  .container { display:flex; margin:20px; gap:20px; }
-  .left-panel, .right-panel { background:white; padding:20px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
-  .left-panel { flex:2; }
-  .right-panel { flex:1; min-width:250px; }
-  label { display:block; margin:10px 0 5px; }
-  input, select { width:100%; padding:8px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc; }
-  button { padding:10px; width:100%; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer; margin-top:10px; }
+  body { font-family: 'Roboto', sans-serif; margin:0; background:#f4f4f9; color:#333; }
+  header { background:#1c1c1e; color:white; padding:20px; text-align:center; }
+  header h1 { margin:0; font-weight:700; }
+  .container { display:flex; flex-wrap:wrap; margin:20px; gap:20px; justify-content:center; }
+  .panel { background:white; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); padding:20px; flex:1 1 300px; max-width:400px; }
+  label { display:block; margin:10px 0 5px; font-weight:500; }
+  input { width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc; }
+  button { width:100%; padding:12px; border:none; border-radius:5px; background:#007bff; color:white; font-weight:700; cursor:pointer; }
   button:hover { background:#0056b3; }
-  #plantas { width:100%; height:400px; background:#eaeaea; border:2px dashed #ccc; display:flex; flex-wrap:wrap; padding:10px; gap:5px; position:relative; }
-  .modulo { width:60px; height:70px; background:#007bff; color:white; display:flex; align-items:center; justify-content:center; font-weight:700; cursor:pointer; border-radius:5px; }
-  .resultado { margin-top:20px; background:#f8f8f8; padding:15px; border-radius:8px; }
+  .resultado { margin-top:20px; padding:15px; border-radius:8px; background:#f8f8f8; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+  .modulos { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-bottom:10px; }
+  .modulo-card { background:#007bff; color:white; padding:10px; border-radius:8px; width:80px; text-align:center; font-weight:700; cursor:pointer; transition:0.3s; }
+  .modulo-card:hover { transform:scale(1.05); }
+  .footer { text-align:center; margin:30px 0; color:#888; font-size:14px; }
+  img { max-width:100%; border-radius:10px; margin-top:10px; }
 </style>
 </head>
 <body>
+
 <header>
-  <h1>Promob Lite - Cozinha Reta</h1>
+  <h1>Promob Lite - Orçamento de Cozinha</h1>
+  <p>Crie módulos e calcule seu orçamento automaticamente</p>
 </header>
+
 <div class="container">
-  <div class="left-panel">
-    <h2>Planta da Cozinha</h2>
-    <div id="plantas"></div>
+
+  <!-- Painel de módulos -->
+  <div class="panel">
+    <h2>Módulos da Cozinha</h2>
+    <div class="modulos" id="modulosContainer"></div>
     <button onclick="adicionarModulo()">Adicionar Módulo</button>
+    <img src="https://cdn-icons-png.flaticon.com/512/242/242381.png" alt="Cozinha 2D">
   </div>
-  <div class="right-panel">
-    <h2>Configurações</h2>
-    <label>Valor MDF 15mm (R$/chapa)</label>
-    <input type="number" id="valorMDF15" value="350">
-    
-    <label>Valor MDF 6mm (R$/chapa)</label>
-    <input type="number" id="valorMDF6" value="150">
+
+  <!-- Painel de configuração -->
+  <div class="panel">
+    <h2>Configurações de Orçamento</h2>
+    <label>Valor MDF 15mm (R$/m²)</label>
+    <input type="number" id="valorMDF15" value="90">
+
+    <label>Valor Fundo 6mm (R$/m²)</label>
+    <input type="number" id="valorMDF6" value="50">
 
     <label>Valor Ferragens (R$)</label>
     <input type="number" id="ferragens" value="600">
@@ -48,20 +57,26 @@
     <button onclick="calcularOrcamento()">Gerar Orçamento</button>
     <div class="resultado" id="resultado"></div>
   </div>
+
+</div>
+
+<div class="footer">
+  Desenvolvido para marceneiros – MVP Promob Lite
 </div>
 
 <script>
 let modulos = [];
 
 function adicionarModulo() {
-  const planta = document.getElementById('plantas');
-  const moduloNum = modulos.length + 1;
-  const div = document.createElement('div');
-  div.className = 'modulo';
-  div.innerText = moduloNum;
-  div.onclick = () => { alert('Módulo selecionado!'); }
-  planta.appendChild(div);
-  modulos.push({ largura: 600, altura: 700, profundidade: 560 }); // padrão
+  const modNum = modulos.length + 1;
+  modulos.push({ largura:600, altura:700, profundidade:560 });
+  
+  const container = document.getElementById('modulosContainer');
+  const card = document.createElement('div');
+  card.className = 'modulo-card';
+  card.innerText = `Módulo ${modNum}`;
+  card.onclick = () => { alert('Módulo selecionado para edição futura!'); }
+  container.appendChild(card);
 }
 
 function calcularOrcamento() {
@@ -71,7 +86,6 @@ function calcularOrcamento() {
   const valorMDF6 = parseFloat(document.getElementById('valorMDF6').value);
   const ferragens = parseFloat(document.getElementById('ferragens').value);
   const margem = parseFloat(document.getElementById('margem').value);
-  const chapaArea = 2.75*1.85;
 
   let totalMDF15 = 0;
   let totalFundo6 = 0;
@@ -81,28 +95,27 @@ function calcularOrcamento() {
     const base = ((m.largura-30)/1000 * m.profundidade/1000);
     const travessa = ((m.largura-30)/1000 * 0.10);
     totalMDF15 += laterais + base + travessa;
-
     totalFundo6 += (m.largura/1000 * m.altura/1000);
   });
 
-  const chapas15 = Math.ceil(totalMDF15 / chapaArea);
-  const chapas6 = Math.ceil(totalFundo6 / chapaArea);
-
-  const custoMDF15 = chapas15 * valorMDF15;
-  const custoMDF6 = chapas6 * valorMDF6;
+  // Cálculo por m²
+  const custoMDF15 = totalMDF15 * valorMDF15;
+  const custoMDF6 = totalFundo6 * valorMDF6;
   const custoTotal = custoMDF15 + custoMDF6 + ferragens;
   const precoFinal = custoTotal * (1 + margem/100);
 
-  document.getElementById('resultado').innerHTML = `
+  const resultadoDiv = document.getElementById('resultado');
+  resultadoDiv.innerHTML = `
     <h3>Resumo do Orçamento</h3>
     <p>Número de módulos: ${modulos.length}</p>
-    <p>Total MDF 15mm: ${totalMDF15.toFixed(2)} m² (${chapas15} chapas)</p>
-    <p>Total Fundo 6mm: ${totalFundo6.toFixed(2)} m² (${chapas6} chapas)</p>
+    <p>Total MDF 15mm: ${totalMDF15.toFixed(2)} m²</p>
+    <p>Total Fundo 6mm: ${totalFundo6.toFixed(2)} m²</p>
     <p>Custo material: R$ ${(custoMDF15+custoMDF6).toFixed(2)}</p>
     <p>Ferragens: R$ ${ferragens.toFixed(2)}</p>
     <p><strong>Preço final sugerido: R$ ${precoFinal.toFixed(2)}</strong></p>
   `;
 }
 </script>
+
 </body>
 </html>
